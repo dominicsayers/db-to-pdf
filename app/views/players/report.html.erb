@@ -1,0 +1,41 @@
+<% @players.each do |player| %>
+<article class="page-break">
+  <h1 class="display-3"><%= player.full_name %></h1>
+
+  <div class="photos">
+    <%= cl_image_tag("blackheath/_DSC#{player.photo_no_gumshield}.jpg", :width => 300, :height => 450, :crop => :fill) %>
+    <%= cl_image_tag("blackheath/_DSC#{player.photo_gumshield}.jpg", :width => 300, :height => 450, :crop => :fill) %>
+  </div>
+
+  <table class="table">
+    <tbody>
+      <tr>
+        <td>Date of birth</td>
+        <td><%= player.date_of_birth %></td>
+      </tr>
+
+      <tr>
+        <td>Is the player allergic to any medication?</td>
+        <td>
+          <% if player.allergic %>
+            <%= player.allergy_note || 'Yes' %>
+          <% else %>
+            No
+          <% end %>
+        </td>
+      </tr>
+
+      <tr>
+        <td>Is the player taking any prescribed medication?</td>
+        <td>
+          <% if player.medication %>
+            <%= player.medication_note || 'Yes' %>
+          <% else %>
+            No
+          <% end %>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</article>
+<% end %>

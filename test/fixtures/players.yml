@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  full_name: MyString
+  date_of_birth: 2017-02-23 16:45:46
+  allergic: false
+  medication: false
+  photo_gumshield: MyString
+  photo_no_gumshield: MyString
+
+two:
+  full_name: MyString
+  date_of_birth: 2017-02-23 16:45:46
+  allergic: false
+  medication: false
+  photo_gumshield: MyString
+  photo_no_gumshield: MyString
