@@ -10,7 +10,7 @@ class PlayersController < ApplicationController
   # GET /players/report
   # GET /players/report.json
   def report
-    @players = Player.all.limit(5)
+    @players = Player.all # .limit(5)
   end
 
   # GET /players/1

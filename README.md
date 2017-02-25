@@ -1,24 +1,5 @@
-# README
+I needed to take a list of records in a database (it could have been a spreadsheet) and create a multi-page PDF document based on that data, one page per record.
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+I couldn't find an easy way to do it, especially handling the page breaks.
 
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Turned out that CSS `@media print` can control page breaks pretty easily, so I just created a view that output all the records and used my browser's Print function to create the PDF.

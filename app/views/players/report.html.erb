@@ -1,6 +1,6 @@
 <% @players.each do |player| %>
 <article class="page-break">
-  <h1 class="display-3"><%= player.full_name %></h1>
+  <h1 class="display-5"><%= player.full_name %></h1>
 
   <div class="photos">
     <%= cl_image_tag("blackheath/_DSC#{player.photo_no_gumshield}.jpg", :width => 300, :height => 450, :crop => :fill) %>
@@ -10,12 +10,12 @@
   <table class="table">
     <tbody>
       <tr>
-        <td>Date of birth</td>
-        <td><%= player.date_of_birth %></td>
+        <td class="label">Date of birth</td>
+        <td><%= l(player.date_of_birth, format: '%d %B %Y') if player.date_of_birth %></td>
       </tr>
 
       <tr>
-        <td>Is the player allergic to any medication?</td>
+        <td class="label">Is the player allergic to any medication?</td>
         <td>
           <% if player.allergic %>
             <%= player.allergy_note || 'Yes' %>
@@ -26,7 +26,7 @@
       </tr>
 
       <tr>
-        <td>Is the player taking any prescribed medication?</td>
+        <td class="label">Is the player taking any prescribed medication?</td>
         <td>
           <% if player.medication %>
             <%= player.medication_note || 'Yes' %>
@@ -34,6 +34,39 @@
             No
           <% end %>
         </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table class="table">
+    <tbody>
+      <tr class="row">
+        <td class = "col-4"><div class="contact">
+          <label>Parent or guardian</label>
+          <%= simple_format [player.pog1_name, player.pog1_phone1, player.pog1_phone2, player.pog1_address].compact.join("\n") %>
+        </div></td>
+
+        <td class = "col-4"><div class="contact">
+          <label>Parent or guardian</label>
+          <%= simple_format [player.pog2_name, player.pog2_phone1, player.pog2_phone2, player.pog2_address].compact.join("\n") %>
+        </div></td>
+
+        <td class = "col-4"><div class="contact">
+          <label>Other emergency contact</label>
+          <%= simple_format [player.ec_name, player.ec_phone1, player.ec_phone2].compact.join("\n") %>
+        </div></td>
+      </tr>
+
+      <tr class="row">
+        <td class = "col-4"><div class="contact">
+          <label>GP</label>
+          <%= simple_format [player.gp_name, player.gp_address].compact.join("\n") %>
+        </div></td>
+
+        <td class = "col-4"><div class="contact">
+          <label>School</label>
+          <%= player.school %>
+        </div></td>
       </tr>
     </tbody>
   </table>

@@ -3,4 +3,29 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 @media print {
   .page-break { display: block; page-break-before: always; }
+
+  p { display: inline ; }
+}
+
+h1 { margin-bottom: 3rem; }
+
+table {
+  margin: 1.5rem 0;
+
+  tr { padding-left: 0.75rem; }
+  td { margin: 0; }
+}
+
+img {
+  margin-right: 0.75rem;
+}
+
+label, .label {
+  color: lightgray;
+}
+
+.contact {
+  min-height: 6.75rem;
+
+  p, label { margin: 0; }
 }
