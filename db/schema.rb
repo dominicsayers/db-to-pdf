@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170224131915) do
+ActiveRecord::Schema.define(version: 20170228181046) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,6 +41,9 @@ ActiveRecord::Schema.define(version: 20170224131915) do
     t.string   "ec_name"
     t.string   "ec_phone1"
     t.string   "ec_phone2"
+    t.string   "match_name"
+    t.boolean  "current"
+    t.index ["match_name"], name: "index_players_on_match_name", unique: true, using: :btree
   end
 
 end

@@ -1,67 +1,192 @@
 #!/usr/bin/env ruby
-require 'google/apis/sheets_v4'
-require 'googleauth'
-require 'googleauth/stores/file_token_store'
+require 'google_api'
 
-OOB_URI = 'urn:ietf:wg:oauth:2.0:oob'
-APPLICATION_NAME = 'Google Sheets API Ruby Quickstart'
-CREDENTIALS_PATH = File.join(Dir.home, '.credentials', "#{ENV['GOOGLE_DOCS_PROJECT_ID']}.yaml")
-SCOPE = Google::Apis::SheetsV4::AUTH_SPREADSHEETS_READONLY
-USER_ID = 'default'
-RANGE = 'A:Z'
+class PlayerData
+  def import
+    puts 'No data found.' if response.values.empty?
+    rows.each { |row| PlayerData::Row.new(row).import }
+  end
 
-def client_id_hash
-  YAML.safe_load(
-    ERB.new(
-      File.read(File.join(Rails.root, 'config', 'google_docs.yml'))
-    ).result
-  )
+  private
+
+  def initialize(spreadsheet_id)
+    @spreadsheet_id = spreadsheet_id
+  end
+
+  def response
+    GoogleAPI.new(@spreadsheet_id).response
+  end
+
+  def rows
+    @rows ||= response.values
+  end
+
+  class Row
+    def import
+      player = Player.find_by(match_name: match_name) || Player.new(full_name: full_name)
+      update_hash = {}
+
+      puts "#{match_name}\t#{player.full_name}\t#{current}" # debug
+
+      %i(
+        date_of_birth allergic medication allergy_note medication_note tetanus school gp_name gp_address current
+        pog1_name pog1_address pog1_phone1 pog1_phone2
+        pog2_name pog2_address pog2_phone1 pog2_phone2
+        ec_name ec_phone1 ec_phone2
+      ).each do |field|
+        current_value = player.send(field)
+        updated_value = send(field)
+
+        next if current_value == updated_value
+        puts "    #{field}\t#{current_value}\t#{updated_value}"
+        update_hash[field] = updated_value
+      end
+
+      player.update update_hash
+      player.save!
+    end
+
+    private
+
+    attr_reader :data
+
+    def initialize(data)
+      @data = data
+    end
+
+    def column(number)
+      value = data[number].strip
+      value.empty? ? nil : value
+    end
+
+    def fixup_phone(string)
+      return unless string
+      return if /n\s*\/*\s*a/i =~ string
+      return if %w(0 -).include?(string)
+      value = %w(2 7).include?(string[0]) ? "0#{string}" : string
+      return value unless /0[\d ]+/ =~ value
+      value.gsub!(' ', '')
+
+      case value[0, 2]
+      when '07'
+        "#{value[0, 5]} #{value[5, 6]}"
+      when '02'
+        "#{value[0, 3]} #{value[3, 4]} #{value[7, 4]}"
+      else
+        value
+      end
+    end
+
+    def phone_from_column(number)
+      fixup_phone column(number)
+    end
+
+    def match_name
+      @match_name ||= full_name.parameterize
+    end
+
+    def full_name
+      @full_name ||= "#{given_name} #{family_name}"
+    end
+
+    def allergy_note
+      @allergy_note ||= data[2] unless column(2).upcase == 'NO'
+    end
+
+    def medication_note
+      @medication_note ||= data[3] unless column(3).upcase == 'NO'
+    end
+
+    def current
+      @current_player ||= date_of_birth && (timestamp > '2016-09-01'.to_datetime) ? true : false
+    end
+
+    # Columns
+
+    def timestamp
+      @timestamp ||= data[0].to_datetime
+    end
+
+    def pog1_name
+      @pog1_name ||= column 1
+    end
+
+    def allergic
+      @allergic ||= (/no\b/i =~ column(2)).nil?
+    end
+
+    def medication
+      @medication ||= (/no\b/i =~ column(3)).nil?
+    end
+
+    def given_name
+      @given_name ||= column 4
+    end
+
+    def family_name
+      @family_name ||= column 5
+    end
+
+    def pog1_address
+      @pog1_address ||= column 6
+    end
+
+    def pog1_phone1
+      @pog1_phone1 ||= phone_from_column 7
+    end
+
+    def pog1_phone2
+      @pog1_phone2 ||= phone_from_column 8
+    end
+
+    def pog2_name
+      @pog2_name ||= column 9
+    end
+
+    def pog2_address
+      @pog2_address ||= column 10
+    end
+
+    def pog2_phone1
+      @pog2_phone1 ||= phone_from_column 11
+    end
+
+    def pog2_phone2
+      @pog2_phone2 ||= phone_from_column 12
+    end
+
+    def ec_name
+      @ec_name ||= column 13
+    end
+
+    def ec_phone1
+      @ec_phone1 ||= phone_from_column 14
+    end
+
+    def ec_phone2
+      @ec_phone2 ||= phone_from_column 15
+    end
+
+    def tetanus
+      @tetanus ||= column 16
+    end
+
+    def school
+      @school ||= column 17
+    end
+
+    def gp_name
+      @gp_name ||= column 18
+    end
+
+    def gp_address
+      @gp_address ||= column 19
+    end
+
+    def date_of_birth
+      @date_of_birth ||= data[20].to_datetime
+    end
+  end
 end
 
-def client_id
-  Google::Auth::ClientId.from_hash(client_id_hash)
-end
-
-def authorize
-  FileUtils.mkdir_p(File.dirname(CREDENTIALS_PATH))
-  credentials
-end
-
-def token_store
-  Google::Auth::Stores::FileTokenStore.new(file: CREDENTIALS_PATH)
-end
-
-def authorizer
-  Google::Auth::UserAuthorizer.new client_id, SCOPE, token_store
-end
-
-def credentials
-  authorizer.get_credentials(USER_ID) || new_credentials
-end
-
-def new_credentials
-  puts 'Open the following URL in the browser and enter the resulting code after authorization'
-  puts authorizer.get_authorization_url base_url: OOB_URI
-  authorizer.get_and_store_credentials_from_code user_id: USER_ID, code: gets, base_url: OOB_URI
-end
-
-def service
-  s = Google::Apis::SheetsV4::SheetsService.new
-  s.client_options.application_name = APPLICATION_NAME
-  s.authorization = authorize
-  s
-end
-
-def response
-  service.get_spreadsheet_values ENV['GOOGLE_DOCS_SHEET_ID'], RANGE
-end
-
-# Prints the names and majors of students in a sample spreadsheet:
-# https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
-puts 'Name, Major:'
-puts 'No data found.' if response.values.empty?
-
-response.values.each do |row|
-  # Print columns A and E, which correspond to indices 0 and 4.
-  puts "#{row[0]}, #{row[4]}"
-end
+PlayerData.new(ENV['GOOGLE_DOCS_SHEET_ID']).import
