@@ -7,13 +7,21 @@
   p { display: inline ; }
 }
 
-h1 { margin-bottom: 3rem; }
+h1 { margin-bottom: 2rem; }
 
-table {
-  margin: 1.5rem 0;
+.table {
+  margin: 1.5rem 0 0;
 
-  tr { padding-left: 0.75rem; }
-  td { margin: 0; }
+  td {
+    margin: 0;
+    padding: 0.5rem;
+  }
+
+  tr {
+    max-height: 11rem;
+    overflow-y: hidden;
+    padding-left: 0.75rem;
+  }
 }
 
 img {
@@ -28,4 +36,58 @@ label, .label {
   min-height: 6.75rem;
 
   p, label { margin: 0; }
+}
+
+footer {
+  color: lightgray;
+  font-size: 9px;
+}
+
+.exception {
+  color: red;
+  font-weight: bold;
+}
+
+.photo-replacement {
+  align-items: center;
+  border: 1px solid grey;
+  display: flex;
+  float: left;
+  height: 450px;
+  justify-content: center;
+  margin-right: 0.75rem;
+  width: 300px;
+}
+
+span.missing-data {
+  background-color: white;
+  border: 1px solid red;
+  display: block;
+  height: 3rem;
+  min-width: 5rem;
+  max-width: 12rem;
+  width: inherit;
+}
+
+table.missing-data {
+  tr {
+    &:nth-of-type(even) { background: #DDD; }
+
+    line-height: 1rem;
+  }
+
+  td {
+    padding: 2px;
+    vertical-align: top;
+
+    div {
+      max-height: 3rem;
+      overflow-y: hidden;
+    }
+  }
+
+  td, th {
+    min-width: 5rem;
+    max-width: 12rem;
+  }
 }

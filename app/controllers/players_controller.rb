@@ -8,9 +8,23 @@ class PlayersController < ApplicationController
   end
 
   # GET /players/report
-  # GET /players/report.json
   def report
-    @players = Player.all # .limit(5)
+    @version = Player.maximum(:updated_at).to_i
+    @players = Player.current # .limit(5)
+  end
+
+  # GET /players/exceptions
+  def exceptions
+    @fields = %i(
+      allergic medication photo_gumshield photo_no_gumshield tetanus school
+      gp_name gp_address
+      pog1_name pog1_phone1
+    )
+
+    where_clause = (['date_of_birth'] | @fields.map(&:to_s)).join(' IS NULL OR ') + ' IS NULL'
+
+    @version = Player.maximum(:updated_at).to_i
+    @players = Player.current.where(where_clause) # .limit(5)
   end
 
   # GET /players/1

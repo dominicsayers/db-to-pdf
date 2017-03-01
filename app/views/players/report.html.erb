@@ -3,15 +3,21 @@
   <h1 class="display-5"><%= player.full_name %></h1>
 
   <div class="photos">
-    <%= cl_image_tag("blackheath/_DSC#{player.photo_no_gumshield}.jpg", :width => 300, :height => 450, :crop => :fill) %>
-    <%= cl_image_tag("blackheath/_DSC#{player.photo_gumshield}.jpg", :width => 300, :height => 450, :crop => :fill) %>
+    <%= image_or_message player.photo_no_gumshield, 'Photo without gumshield needed' %>
+    <%= image_or_message player.photo_gumshield, 'Photo with gumshield needed' %>
   </div>
 
   <table class="table">
     <tbody>
       <tr>
         <td class="label">Date of birth</td>
-        <td><%= l(player.date_of_birth, format: '%d %B %Y') if player.date_of_birth %></td>
+        <td>
+          <% if player.date_of_birth %>
+            <%= l(player.date_of_birth, format: '%d %B %Y') %>
+          <% else %>
+            <span class="exception">Unknown</span>
+          <% end %>
+        </td>
       </tr>
 
       <tr>
@@ -19,6 +25,8 @@
         <td>
           <% if player.allergic %>
             <%= player.allergy_note || 'Yes' %>
+          <% elsif player.allergic.nil? %>
+            <span class="exception">Unknown</span>
           <% else %>
             No
           <% end %>
@@ -30,8 +38,21 @@
         <td>
           <% if player.medication %>
             <%= player.medication_note || 'Yes' %>
+          <% elsif player.medication.nil? %>
+            <span class="exception">Unknown</span>
           <% else %>
             No
+          <% end %>
+        </td>
+      </tr>
+
+      <tr>
+        <td class="label">Year of latest tetanus inoculation</td>
+        <td>
+          <% if player.tetanus %>
+            <%= player.tetanus %>
+          <% else %>
+            <span class="exception">Unknown</span>
           <% end %>
         </td>
       </tr>
@@ -44,6 +65,9 @@
         <td class = "col-4"><div class="contact">
           <label>Parent or guardian</label>
           <%= simple_format [player.pog1_name, player.pog1_phone1, player.pog1_phone2, player.pog1_address].compact.join("\n") %>
+          <% if player.pog1_name.blank? || player.pog1_phone1.blank? %>
+            <span class="exception">Parent or guardian's name and phone number needed</span>
+          <% end %>
         </div></td>
 
         <td class = "col-4"><div class="contact">
@@ -61,14 +85,22 @@
         <td class = "col-4"><div class="contact">
           <label>GP</label>
           <%= simple_format [player.gp_name, player.gp_address].compact.join("\n") %>
+          <% if player.gp_name.blank? || player.gp_address.blank? %>
+            <span class="exception">GP's name and address needed</span>
+          <% end %>
         </div></td>
 
         <td class = "col-4"><div class="contact">
           <label>School</label>
           <%= player.school %>
+          <% if player.school.blank? %>
+            <span class="exception">School name needed</span>
+          <% end %>
         </div></td>
       </tr>
     </tbody>
   </table>
 </article>
+
+<%= standard_footer %>
 <% end %>
