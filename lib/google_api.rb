@@ -14,7 +14,7 @@ class GoogleAPI
   CREDENTIALS_PATH = File.join(Dir.home, '.credentials', "#{ENV['GOOGLE_DOCS_PROJECT_ID']}.yaml")
   SCOPE = Google::Apis::SheetsV4::AUTH_SPREADSHEETS_READONLY
   USER_ID = 'default'
-  RANGE = 'A2:Z'
+  RANGE = 'A2:AE'
 
   def initialize(spreadsheet_id)
     @spreadsheet_id = spreadsheet_id
