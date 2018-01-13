@@ -1,7 +1,7 @@
 module PlayersHelper
   def image_or_message(image_id, message)
     if image_id
-      cl_image_tag("#{ENV['CLOUDINARY_ROOT']}#{image_id}.jpg", :width => 300, :height => 450, :crop => :fill)
+      cl_image_tag("#{image_id}.jpg", :width => 300, :height => 450, :crop => :fill)
     else
       content_tag :div, class: 'photo-replacement' do
         content_tag :span, class: 'exception' do

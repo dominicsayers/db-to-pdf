@@ -103,6 +103,18 @@ class PlayerData
       @current_player ||= date_of_birth && (timestamp > '2016-09-01'.to_datetime) ? true : false
     end
 
+    def photo_current_or_previous(col_current, col_previous)
+      photo_candidate = column(col_current)
+
+      if photo_candidate
+        File.join(ENV['CLOUDINARY_ROOT'], photo_candidate)
+      else
+        photo_candidate = column(col_previous)
+
+        File.join(ENV['CLOUDINARY_ROOT_PREVIOUS'], photo_candidate) if photo_candidate
+      end
+    end
+
     # Columns
 
     def timestamp
@@ -190,11 +202,11 @@ class PlayerData
     end
 
     def photo_gumshield
-      @photo_gumshield ||= column 28
+      @photo_gumshield ||= photo_current_or_previous(28, 32)
     end
 
     def photo_no_gumshield
-      @photo_no_gumshield ||= column 29
+      @photo_no_gumshield ||= photo_current_or_previous(29, 33)
     end
   end
 end
