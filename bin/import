@@ -100,7 +100,16 @@ class PlayerData
     end
 
     def current
-      @current_player ||= date_of_birth && (timestamp > '2016-09-01'.to_datetime) ? true : false
+      @current_player ||= begin
+        case current_flag
+        when "f"
+          false
+        when "t"
+          true
+        else
+          date_of_birth && (timestamp > '2016-10-13'.to_datetime) ? true : false
+        end
+      end
     end
 
     def photo_current_or_previous(col_current, col_previous)
@@ -199,6 +208,13 @@ class PlayerData
 
     def date_of_birth
       @date_of_birth ||= data[20].to_datetime
+    end
+
+    def current_flag
+      @current_flag ||= begin
+        flag = data[27]
+        flag[0].downcase if flag
+      end
     end
 
     def photo_gumshield
