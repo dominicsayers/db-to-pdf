@@ -256,7 +256,7 @@ GEM
       trailblazer-option (>= 0.1.1, < 0.2.0)
       uber (< 0.2.0)
     retriable (3.1.2)
-    rexml (3.3.3)
+    rexml (3.3.6)
       strscan
     sass-rails (6.0.0)
       sassc-rails (~> 2.1, >= 2.1.1)
