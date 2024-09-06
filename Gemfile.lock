@@ -198,7 +198,7 @@ GEM
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     os (1.1.4)
-    pg (1.5.7)
+    pg (1.5.8)
     popper_js (2.11.8)
     psych (5.1.2)
       stringio
