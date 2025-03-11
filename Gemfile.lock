@@ -304,7 +304,7 @@ GEM
     uber (0.1.0)
     uglifier (4.2.1)
       execjs (>= 0.3.0, < 3)
-    uri (0.13.1)
+    uri (0.13.2)
     useragent (0.16.11)
     web-console (4.2.1)
       actionview (>= 6.0.0)
