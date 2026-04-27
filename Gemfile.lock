@@ -106,7 +106,7 @@ GEM
     date (3.5.1)
     declarative (0.0.20)
     drb (2.2.3)
-    erb (6.0.2)
+    erb (6.0.4)
     erubi (1.13.1)
     execjs (2.9.1)
     faraday (2.14.1)
